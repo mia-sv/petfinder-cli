@@ -12,7 +12,7 @@ MAIN_MENU = tabulate(
         ["F", "Find your forever buddy"],
         ["S", "Show your favourite soon-to-be buddies"],
         ["C", "Configure your buddy search preferences"],
-        ["E", "Exit program"],
+        ["E", "Exit program."],
     ],
     headers="firstrow",
     tablefmt="rounded_outline",

@@ -19,13 +19,8 @@ def find_menu(pet_count, current_page, total_pages):
 
 
 def find(token):
-    try:
-        response = requests.get(
-            f"{common.API_URL}/animals",
-            headers={"Authorization": f"Bearer {token}"},
-        ).json()
-    except requests.RequestException:
-        sys.exit("Request failed.")
+    response = get_animals(token, 1)
+    favourited_animals = set()
 
     while True:
         num_total_animals = response["pagination"]["total_count"]
@@ -35,26 +30,43 @@ def find(token):
 
         print(f"Found {num_total_animals} pets.")
 
-        animals_table = tabulate_animals(response["animals"])
+        animals_table = tabulate_animals(response["animals"], favourited_animals)
         print(animals_table)
 
         print(find_menu(num_page_animals, current_page, total_pages))
 
         match input("Choose option: ").upper():
             case num if str(num).isdigit() and 0 <= int(num) < num_page_animals:
-                print("NUM")
-            case "N":
-                print("NEXT")
-            case "P":
-                print("PREVIOUS")
+                petfinder_id = response["animals"][int(num)]["id"]
+
+                if petfinder_id in favourited_animals:
+                    favourited_animals.discard(petfinder_id)
+                else:
+                    favourited_animals.add(petfinder_id)
+            case "N" if current_page < total_pages:
+                response = get_animals(token, current_page + 1)
+            case "P" if current_page > 1:
+                response = get_animals(token, current_page - 1)
             case "E":
                 break
             case _:
                 print("Invalid option. Try again!")
 
 
-def tabulate_animals(animals):
-    formatted_animals = list(map(format_animal, animals))
+def get_animals(token, page_number):
+    try:
+        return requests.get(
+            f"{common.API_URL}/animals?page={page_number}",
+            headers={"Authorization": f"Bearer {token}"},
+        ).json()
+    except requests.RequestException:
+        sys.exit("Request failed.")
+
+
+def tabulate_animals(animals, favourited_animals):
+    formatted_animals = [
+        format_animal(animal, favourited_animals) for animal in animals
+    ]
 
     return tabulate(
         [
@@ -68,7 +80,7 @@ def tabulate_animals(animals):
                 "Size",
                 "Adoptable",
                 "URL",
-                #"Favourited"
+                "Favourited",
             ],
             *formatted_animals,
         ],
@@ -78,7 +90,7 @@ def tabulate_animals(animals):
     )
 
 
-def format_animal(animal):
+def format_animal(animal, favourited_animals):
     color = animal["colors"]["primary"]
     status = animal["status"]
 
@@ -91,4 +103,5 @@ def format_animal(animal):
         animal["size"],
         "Yes" if status == "adoptable" else "No",
         common.hide_url(animal["url"]),
+        "Yes" if animal["id"] in favourited_animals else "No",
     ]
