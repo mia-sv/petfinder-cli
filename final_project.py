@@ -3,13 +3,16 @@ from decouple import config
 import sys
 import requests
 
+from finder import find
+import common
+
 MAIN_MENU = tabulate(
     [
         ["ID", "Option"],
-        ["1", "Find your forever buddy"],
-        ["2", "Show your favourite soon-to-be buddies"],
-        ["3", "Configure your buddy search preferences"],
-        ["4", "Exit"],
+        ["F", "Find your forever buddy"],
+        ["S", "Show your favourite soon-to-be buddies"],
+        ["C", "Configure your buddy search preferences"],
+        ["E", "Exit program"],
     ],
     headers="firstrow",
     tablefmt="rounded_outline",
@@ -21,8 +24,6 @@ try:
 except UndefinedValueError:
     sys.exit("Missing API key or secret.")
 
-API_URL = "https://api.petfinder.com/v2"
-
 
 def main():
     token = generate_token()
@@ -30,71 +31,17 @@ def main():
     while True:
         print(MAIN_MENU)
 
-        match input("Choose option: "):
-            case "1":
+        match input("Choose option: ").upper():
+            case "F":
                 find(token)
-            case "2":
+            case "S":
                 favourite(token)
-            case "3":
+            case "C":
                 configure()
-            case "4":
+            case "E":
                 sys.exit(0)
             case _:
                 print("Invalid option. Try again!")
-
-
-# This only works for bash terminals
-def hide_url(url):
-    return f"\u001b]8;;{url}\u001b\\Click here!\u001b]8;;\u001b\\"
-
-
-def find(token):
-    def format_animal(animal):
-        return [
-            animal["id"],
-            animal["type"],
-            animal["breeds"]["primary"],
-            animal["colors"]["primary"],
-            animal["age"],
-            animal["gender"],
-            animal["size"],
-            animal["status"],
-            hide_url(animal["url"]),
-        ]
-
-    try:
-        response = requests.get(
-            f"{API_URL}/animals", headers={"Authorization": f"Bearer {token}"}
-        ).json()
-    except requests.RequestException:
-        sys.exit("Request failed.")
-
-    total_count = response["pagination"]["total_count"]
-    current_page = response["pagination"]["current_page"]
-    total_pages = response["pagination"]["total_pages"]
-
-    animals = list(map(format_animal, response["animals"]))
-
-    results_table = tabulate(
-        [
-            [
-                "ID",
-                "Species",
-                "Breed",
-                "Color",
-                "Age",
-                "Gender",
-                "Size",
-                "Adoptable",
-                "URL",
-            ],
-            *animals,
-        ],
-        headers="firstrow",
-        tablefmt="rounded_outline",
-    )
-
-    print(results_table)
 
 
 def favourite(token):
@@ -108,7 +55,7 @@ def configure():
 def generate_token():
     try:
         response = requests.post(
-            f"{API_URL}/oauth2/token",
+            f"{common.API_URL}/oauth2/token",
             data={
                 "grant_type": "client_credentials",
                 "client_id": API_KEY,
