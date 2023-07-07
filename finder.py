@@ -20,7 +20,7 @@ def find_menu(pet_count, current_page, total_pages):
 
 def find(token):
     response = get_animals(token, 1)
-    favourited_animals = set()
+    favourited_animals = common.get_favourites()
 
     while True:
         num_total_animals = response["pagination"]["total_count"]
@@ -43,6 +43,9 @@ def find(token):
                     favourited_animals.discard(petfinder_id)
                 else:
                     favourited_animals.add(petfinder_id)
+
+                common.save_favourites(favourited_animals)
+
             case "N" if current_page < total_pages:
                 response = get_animals(token, current_page + 1)
             case "P" if current_page > 1:
