@@ -7,22 +7,23 @@ def hide_url(url):
     return f"\u001b]8;;{url}\u001b\\Click here!\u001b]8;;\u001b\\"
 
 
-def save_favourites(new_favourites):
-    file = open(FAVOURITES_FILE, "w")
+def save_strset_to_file(items, filename):
+    file = open(filename, "w")
 
-    for favourite in set(new_favourites):
-        file.write(f"{favourite}\n")
+    for item in set(items):
+        file.write(f"{item}\n")
 
     file.close()
 
 
-def get_favourites():
+def get_intset_from_file(filename):
     try:
-        file = open(FAVOURITES_FILE, "r")
+        file = open(filename, "r")
 
         lines = file.readlines()
         file.close()
 
+        # We remove the (\n) and convert to int
         return set([int(line[:-1]) for line in lines])
     except FileNotFoundError:
         return set()

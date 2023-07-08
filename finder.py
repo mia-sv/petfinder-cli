@@ -20,7 +20,8 @@ def find_menu(pet_count, current_page, total_pages):
 
 def find(token):
     response = get_animals(token, 1)
-    favourited_animals = common.get_favourites()
+    # Gets a set of animal ids from the favourites file.
+    favourited_animals = common.get_intset_from_file(common.FAVOURITES_FILE)
 
     while True:
         num_total_animals = response["pagination"]["total_count"]
@@ -28,24 +29,30 @@ def find(token):
         current_page = response["pagination"]["current_page"]
         total_pages = response["pagination"]["total_pages"]
 
-        print(f"Found {num_total_animals} pets.")
-
+        # We send a set of favourited animals so we can set the (favourited) flag.
         animals_table = tabulate_animals(response["animals"], favourited_animals)
-        print(animals_table)
 
+        print(f"Found {num_total_animals} pets.")
+        print(animals_table)
         print(find_menu(num_page_animals, current_page, total_pages))
 
         match input("Choose option: ").upper():
+            # We must cast num to str, so we have access to the isdigit() method.
+            # We check if the input is an int and, if so, it must be between 0 and
+            # the number of animals in the current page minus 1 (the index).
             case num if str(num).isdigit() and 0 <= int(num) < num_page_animals:
+                # Fetches the id from the animal at the index we enter.
                 petfinder_id = response["animals"][int(num)]["id"]
 
-                if petfinder_id in favourited_animals:
-                    favourited_animals.discard(petfinder_id)
-                else:
+                # If the id is already favourited, we unfavourite it.
+                if petfinder_id not in favourited_animals:
                     favourited_animals.add(petfinder_id)
+                else:
+                    favourited_animals.discard(petfinder_id)
 
-                common.save_favourites(favourited_animals)
-
+                common.save_strset_to_file(
+                    favourited_animals, common.FAVOURITES_FILE
+                )
             case "N" if current_page < total_pages:
                 response = get_animals(token, current_page + 1)
             case "P" if current_page > 1:
@@ -63,7 +70,7 @@ def get_animals(token, page_number):
             headers={"Authorization": f"Bearer {token}"},
         ).json()
     except requests.RequestException:
-        sys.exit("Request failed.")
+        sys.exit("Request to get animals failed.")
 
 
 def tabulate_animals(animals, favourited_animals):

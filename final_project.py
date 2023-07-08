@@ -4,6 +4,7 @@ import sys
 import requests
 
 from finder import find
+from favourites import favourites
 import common
 
 MAIN_MENU = tabulate(
@@ -12,7 +13,7 @@ MAIN_MENU = tabulate(
         ["F", "Find your forever buddy"],
         ["S", "Show your favourite soon-to-be buddies"],
         ["C", "Configure your buddy search preferences"],
-        ["E", "Exit program."],
+        ["Q", "Quit program."],
     ],
     headers="firstrow",
     tablefmt="rounded_outline",
@@ -35,17 +36,13 @@ def main():
             case "F":
                 find(token)
             case "S":
-                favourite(token)
+                favourites(token)
             case "C":
                 configure()
-            case "E":
+            case "Q":
                 sys.exit(0)
             case _:
                 print("Invalid option. Try again!")
-
-
-def favourite(token):
-    print("Favourite")
 
 
 def configure():
