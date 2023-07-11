@@ -19,12 +19,12 @@ def find_menu(pet_count, current_page, total_pages):
 
 
 def find(token):
-    find_configuration = common.CONFIGURATION
+    find_configuration = common.get_configuration_from_file()
     response = get_animals(token, 1, find_configuration)
 
     # Gets a set of animal ids from the favourites file.
-    favourited_animals = common.get_intset_from_file(common.FAVOURITES_FILE)
- 
+    favourited_animals = common.get_favourites_from_file()
+
     # Check if configuration caused errors
     if "animals" not in response:
         print("Failed to fetch results, please check configuration.")
@@ -54,9 +54,7 @@ def find(token):
                 else:
                     favourited_animals.discard(petfinder_id)
 
-                common.save_strset_to_file(
-                    favourited_animals, common.FAVOURITES_FILE
-                )
+                common.save_favourites_to_file(favourited_animals)
             case "N" if current_page < total_pages:
                 response = get_animals(token, current_page + 1, find_configuration)
             case "P" if current_page > 1:
@@ -113,7 +111,7 @@ def tabulate_animals(animals, favourited_animals):
 
 
 def format_animal(animal, favourited_animals):
-    color = animal["colors"]["primary"]
+    color = common.get_animal_colors(animal["colors"])
     status = animal["status"]
     city = animal["contact"]["address"]["city"]
     state = animal["contact"]["address"]["state"]
@@ -121,7 +119,7 @@ def format_animal(animal, favourited_animals):
     return [
         animal["type"],
         animal["breeds"]["primary"],
-        color if color != None else "Unknown",
+        color if color else "Unknown",
         animal["age"],
         animal["gender"],
         animal["size"],

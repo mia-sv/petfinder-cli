@@ -5,8 +5,7 @@ import common
 
 
 def favourites(token):
-    # Fetch all favourites from file
-    favourited_animals_ids = common.get_intset_from_file(common.FAVOURITES_FILE)
+    favourited_animals_ids = common.get_favourites_from_file()
 
     # Fetch favourites 1 by 1 from the API, by id
     print("Fetching favourite animal info...", end="", flush=True)
@@ -16,7 +15,7 @@ def favourites(token):
     # Filter our every single animal whose request failed
     # and remove them from the file
     animals = [animal for animal in animals if animal != None]
-    common.save_strset_to_file(get_animal_ids(animals), common.FAVOURITES_FILE)
+    common.save_favourites_to_file(get_animal_ids(animals))
 
     while True:
         print(tabulate_animals(animals))
@@ -31,9 +30,7 @@ def favourites(token):
                 animals = [animal for animal in animals if animal["id"] != animal_id]
 
                 # Updates the favourites file with the new list (without the matching id)
-                common.save_strset_to_file(
-                    get_animal_ids(animals), common.FAVOURITES_FILE
-                )
+                common.save_favourites_to_file(get_animal_ids(animals))
             case "E":
                 break
             case _:
@@ -60,13 +57,13 @@ def get_animal(token, id):
 
 
 def format_animal(animal):
-    color = animal["colors"]["primary"]
+    color = common.get_animal_colors(animal["colors"])
     status = animal["status"]
 
     return [
         animal["type"],
         animal["breeds"]["primary"],
-        color if color != None else "Unknown",
+        color if color else "Unknown",
         animal["age"],
         animal["gender"],
         animal["size"],

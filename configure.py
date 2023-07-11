@@ -17,12 +17,12 @@ PARAMETERS = {
 }
 
 
-def keys_menu(keys_list):
+def keys_menu(configuration, keys_list):
     keys_list_formatted = [
         [
             idx,
             f"Change {key.capitalize()}",
-            common.CONFIGURATION.get(key, "Any").capitalize(),
+            configuration.get(key, "Any").capitalize(),
         ]
         for idx, key in enumerate(keys_list)
     ]
@@ -31,7 +31,7 @@ def keys_menu(keys_list):
         [
             ["ID", "Option", "Current Value"],
             *keys_list_formatted,
-            ["L", "Change Location", common.CONFIGURATION.get("location", "Any")],
+            ["L", "Change Location", configuration.get("location", "Any")],
             ["E", "Exit to menu", ""],
         ],
         headers="firstrow",
@@ -55,10 +55,12 @@ def values_menu(values_list):
 
 
 def configure():
+    configuration = common.get_configuration_from_file()
+
     keys_list = sorted(list(PARAMETERS.keys()))
 
     while True:
-        print(keys_menu(keys_list))
+        print(keys_menu(configuration, keys_list))
 
         match input("Choose option: ").upper():
             case num if common.is_int_and_between(num, 0, keys_list):
@@ -66,7 +68,7 @@ def configure():
                 chosen_key = keys_list[int(num)]
                 values_list = sorted(list(PARAMETERS[chosen_key]))
 
-                configure_submenu(values_list, chosen_key)
+                configure_submenu(configuration, values_list, chosen_key)
             case "L":
                 while True:
                     location_input = (
@@ -79,15 +81,18 @@ def configure():
                     )
 
                     if len(location_input) == 0:
-                        common.CONFIGURATION.pop("location")
+                        configuration.pop("location", None)
+                        common.save_configuration_to_file(configuration)
                         break
 
                     location_pair = location_input.split(", ")
 
                     if len(location_pair) == 2 and len(location_pair[1]) == 2:
-                        common.CONFIGURATION[
+                        configuration[
                             "location"
                         ] = f"{location_pair[0].capitalize()}, {location_pair[1].upper()}"
+
+                        common.save_configuration_to_file(configuration)
 
                         break
                     else:
@@ -98,7 +103,7 @@ def configure():
                 print("Invalid option. Try again!")
 
 
-def configure_submenu(values_list, chosen_key):
+def configure_submenu(configuration, values_list, chosen_key):
     while True:
         print(values_menu(values_list))
 
@@ -108,11 +113,13 @@ def configure_submenu(values_list, chosen_key):
                 chosen_value = values_list[int(num)]
 
                 # Update the configuration with a new value
-                common.CONFIGURATION[chosen_key] = chosen_value
+                configuration[chosen_key] = chosen_value
+                common.save_configuration_to_file(configuration)
                 break
             case "A":
                 # Remove this key from the configuration
-                common.CONFIGURATION.pop(chosen_key)
+                configuration.pop(chosen_key, None)
+                common.save_configuration_to_file(configuration)
                 break
             case _:
                 print("Invalid option. Try again!")
