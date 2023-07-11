@@ -31,6 +31,7 @@ def keys_menu(keys_list):
         [
             ["ID", "Option", "Current Value"],
             *keys_list_formatted,
+            ["L", "Change Location", common.CONFIGURATION.get("location", "Any")],
             ["E", "Exit to menu", ""],
         ],
         headers="firstrow",
@@ -66,6 +67,31 @@ def configure():
                 values_list = sorted(list(PARAMETERS[chosen_key]))
 
                 configure_submenu(values_list, chosen_key)
+            case "L":
+                while True:
+                    location_input = (
+                        input(
+                            "Insert location (City, State (2-letter)) or nothing: "
+                        )
+                        .replace("\n", "")
+                        .lower()
+                        .strip()
+                    )
+
+                    if len(location_input) == 0:
+                        common.CONFIGURATION.pop("location")
+                        break
+
+                    location_pair = location_input.split(", ")
+
+                    if len(location_pair) == 2 and len(location_pair[1]) == 2:
+                        common.CONFIGURATION[
+                            "location"
+                        ] = f"{location_pair[0].capitalize()}, {location_pair[1].upper()}"
+
+                        break
+                    else:
+                        print("Invalid location format.")
             case "E":
                 break
             case _:
