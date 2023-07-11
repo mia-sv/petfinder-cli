@@ -5,6 +5,7 @@ import requests
 
 from finder import find
 from favourites import favourites
+from configure import configure
 import common
 
 MAIN_MENU = tabulate(
@@ -43,10 +44,6 @@ def main():
                 sys.exit(0)
             case _:
                 print("Invalid option. Try again!")
-
-
-def configure():
-    print("Configure")
 
 
 def generate_token():

@@ -1,6 +1,8 @@
 API_URL = "https://api.petfinder.com/v2"
 FAVOURITES_FILE = ".favourites"
 
+CONFIGURATION = {}
+
 
 # This only works for bash terminals
 def hide_url(url):
@@ -27,3 +29,8 @@ def get_intset_from_file(filename):
         return set([int(line[:-1]) for line in lines])
     except FileNotFoundError:
         return set()
+
+
+# Checks if val is an int and between a (inclusive) and b (exclusive)
+def is_int_and_between(val, a, b):
+    return str(val).isdigit() and a <= int(val) < len(b)

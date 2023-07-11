@@ -1,9 +1,6 @@
 from tabulate import tabulate
 import requests
 
-from finder import tabulate_animals
-from finder import get_animals
-from finder import format_animal
 import common
 
 
@@ -26,7 +23,7 @@ def favourites(token):
         print(favourites_menu(len(animals)))
 
         match input("Choose option: ").upper():
-            case num if str(num).isdigit() and 0 <= int(num) < len(animals):
+            case num if common.is_int_and_between(num, 0, len(animals)):
                 # Fetches the id from the animal at the index we enter.
                 animal_id = animals[int(num)]["id"]
 

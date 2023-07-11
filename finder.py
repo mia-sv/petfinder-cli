@@ -37,10 +37,7 @@ def find(token):
         print(find_menu(num_page_animals, current_page, total_pages))
 
         match input("Choose option: ").upper():
-            # We must cast num to str, so we have access to the isdigit() method.
-            # We check if the input is an int and, if so, it must be between 0 and
-            # the number of animals in the current page minus 1 (the index).
-            case num if str(num).isdigit() and 0 <= int(num) < num_page_animals:
+            case num if common.is_int_and_between(num, 0, num_page_animals):
                 # Fetches the id from the animal at the index we enter.
                 petfinder_id = response["animals"][int(num)]["id"]
 
@@ -82,7 +79,7 @@ def tabulate_animals(animals, favourited_animals):
         [
             [
                 "ID",
-                "Species",
+                "Type",
                 "Breed",
                 "Color",
                 "Age",
