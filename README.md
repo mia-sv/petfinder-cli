@@ -13,6 +13,8 @@ This program was submmited as the CS50P final project.
 - Bookmarking pets as favourites, so users can track them and their current state.
 - All configuration and favourite pets' data is persisted.
 
+  Video Demo: [Click Here.](https://raw.githubusercontent.com/mia-sv/petfinder-cli/main/Video%20Presentation.mp4)
+
 ### Running Instructions
 1. Create an account on Petfinder and generate an API key and secret and put them in `.env`.
 2. Install all of the pip requirements in `requirements.txt`.
