@@ -5,7 +5,7 @@ Petfinder is an online database of animals who are searching for their forever h
 
 Petfinder CLI is a command line searcher for pets, using the Petfinder API, allowing users to search, configure and save the information about the animals available on the website.
 
-This program was submmited as the CS50P final project.
+This program was submmited as the [CS50P](https://cs50.harvard.edu/python/2022/) final project.
 
 ### Features
 - Searching all animals available on Petfinder, informing the users which ones are still adoptable and where, as well as their phisical characteristics.
@@ -19,3 +19,8 @@ This program was submmited as the CS50P final project.
 1. Create an account on Petfinder and generate an API key and secret and put them in `.env`.
 2. Install all of the pip requirements in `requirements.txt`.
 3. Run `python project.py` in your terminal.
+
+### Project Structure 
+- The `menu` package consists of all the files that implement the necessary functionalities for the program's features: `finder.py`, `favourites.py` and `configure.py`, called by the project.py file.
+- The `test` package contains `pytest` test files for all of the functionalities in `menu` package. These files are called in the `test_project.py` file and have the same names as their counterparts in the `menu` package.
+- The `common.py` file gathers all of the functions and constants which are shared through multiple files.
