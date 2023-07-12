@@ -63,7 +63,7 @@ def configure():
         print(keys_menu(configuration, keys_list))
 
         match input("Choose option: ").upper():
-            case num if common.is_int_and_between(num, 0, keys_list):
+            case num if common.is_int_and_between(num, 0, len(keys_list)):
                 # num is the index of the key we choose from keys_list
                 chosen_key = keys_list[int(num)]
                 values_list = sorted(list(PARAMETERS[chosen_key]))
@@ -108,7 +108,7 @@ def configure_submenu(configuration, values_list, chosen_key):
         print(values_menu(values_list))
 
         match input("Choose option: ").upper():
-            case num if common.is_int_and_between(num, 0, values_list):
+            case num if common.is_int_and_between(num, 0, len(values_list)):
                 # num is the index of the key we choose from values_list
                 chosen_value = values_list[int(num)]
 

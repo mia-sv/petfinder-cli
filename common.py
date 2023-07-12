@@ -65,10 +65,10 @@ def get_configuration_from_file():
 
 # Checks if val is an int and between a (inclusive) and b (exclusive)
 def is_int_and_between(val, a, b):
-    return str(val).isdigit() and a <= int(val) < len(b)
+    return str(val).isdigit() and a <= int(val) < b
 
 
-# Joins primary, secondary and tertiary animal colors
+# Joins primary, secondary and tertiary animal colors.
 def get_animal_colors(colors_dict):
     colors_list = [
         colors_dict.get("primary"),

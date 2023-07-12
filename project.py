@@ -8,30 +8,14 @@ from favourites import favourites
 from configure import configure
 import common
 
-MAIN_MENU = tabulate(
-    [
-        ["ID", "Option"],
-        ["F", "Find your forever buddy"],
-        ["S", "Show your favourite soon-to-be buddies"],
-        ["C", "Configure your buddy search preferences"],
-        ["Q", "Quit program."],
-    ],
-    headers="firstrow",
-    tablefmt="rounded_outline",
-)
-
-try:
-    API_KEY = config("API_KEY")
-    API_SECRET = config("API_SECRET")
-except UndefinedValueError:
-    sys.exit("Missing API key or secret.")
-
 
 def main():
-    token = generate_token()
+    api_key, api_secret = get_config()
+
+    token = generate_token(api_key, api_secret)
 
     while True:
-        print(MAIN_MENU)
+        print_menu()
 
         match input("Choose option: ").upper():
             case "F":
@@ -46,14 +30,14 @@ def main():
                 print("Invalid option. Try again!")
 
 
-def generate_token():
+def generate_token(api_key, api_secret):
     try:
         response = requests.post(
             f"{common.API_URL}/oauth2/token",
             data={
                 "grant_type": "client_credentials",
-                "client_id": API_KEY,
-                "client_secret": API_SECRET,
+                "client_id": api_key,
+                "client_secret": api_secret,
             },
         )
     except requests.RequestException:
@@ -65,6 +49,29 @@ def generate_token():
         sys.exit(1)
 
     return response.json()["access_token"]
+
+
+def print_menu():
+    print(
+        tabulate(
+            [
+                ["ID", "Option"],
+                ["F", "Find your forever buddy"],
+                ["S", "Show your favourite soon-to-be buddies"],
+                ["C", "Configure your buddy search preferences"],
+                ["Q", "Quit program."],
+            ],
+            headers="firstrow",
+            tablefmt="rounded_outline",
+        )
+    )
+
+
+def get_config():
+    try:
+        return config("API_KEY"), config("API_SECRET")
+    except UndefinedValueError:
+        sys.exit("Missing API key or secret.")
 
 
 if __name__ == "__main__":
