@@ -59,6 +59,8 @@ def get_animal(token, id):
 def format_animal(animal):
     color = common.get_animal_colors(animal["colors"])
     status = animal["status"]
+    city = animal["contact"]["address"]["city"]
+    state = animal["contact"]["address"]["state"]
 
     return [
         animal["type"],
@@ -68,6 +70,7 @@ def format_animal(animal):
         animal["gender"],
         animal["size"],
         "Yes" if status == "adoptable" else "No",
+        f"{city}, {state}",
         common.hide_url(animal["url"]),
     ]
 
@@ -86,6 +89,7 @@ def tabulate_animals(animals):
                 "Gender",
                 "Size",
                 "Adoptable",
+                "Location",
                 "URL",
             ],
             *formatted_animals,
@@ -109,4 +113,4 @@ def favourites_menu(pet_count):
 
 
 def get_animal_ids(animals):
-    return [animal["id"] for animal in animals]
+    return [animal["id"] for animal in animals if "id" in animal]

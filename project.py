@@ -3,9 +3,9 @@ from decouple import config
 import sys
 import requests
 
-from finder import find
-from favourites import favourites
-from configure import configure
+from menu.finder import find as find
+from menu.favourites import favourites as favourites
+from menu.configure import configure as configure
 import common
 
 
