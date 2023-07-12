@@ -21,6 +21,6 @@ This program was submmited as the [CS50P](https://cs50.harvard.edu/python/2022/)
 3. Run `python project.py` in your terminal.
 
 ### Project Structure 
-- The `menu` package consists of all the files that implement the necessary functionalities for the program's features: `finder.py`, `favourites.py` and `configure.py`, called by the project.py file.
+- The `menu` package consists of all the files that implement the necessary functionalities for the program's features: `finder.py`, `favourites.py` and `configure.py`, called by the `project.py` file.
 - The `test` package contains `pytest` test files for all of the functionalities in `menu` package. These files are called in the `test_project.py` file and have the same names as their counterparts in the `menu` package.
 - The `common.py` file gathers all of the functions and constants which are shared through multiple files.
